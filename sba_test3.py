@@ -164,8 +164,8 @@ def register_user():
     hide_mainscreen()
     if password_info == confirm_password_info:
         
-        query_vals = (username_info,password_info)
-        command_handler.execute("INSERT INTO users (username,password,privilege,status) VALUES (%s,%s,'guest','active')",query_vals)
+        
+        command_handler.execute(f"INSERT INTO users (username,password,privilege,status) VALUES ('{username_info}','{password_info}','guest','active')")
         db.commit()
 
         username_entry.delete(0, END)
