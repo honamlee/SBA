@@ -7,6 +7,10 @@ import sqlite3
 conn = sqlite3.connect('user.db')
 c = conn.cursor()
 
+
+
+    
+
 def table_test():
     global screen_table
     screen_table = Toplevel(screen)
@@ -23,6 +27,7 @@ def table_test():
             e.grid(row=i, column=j) 
             e.insert(END, user[j])
         i=i+1
+        
 
 def admin_add_account():
     print("account added")
