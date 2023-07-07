@@ -6,35 +6,69 @@ import sqlite3
 
 conn = sqlite3.connect('user.db')
 c = conn.cursor()
+c.execute('''CREATE TABLE IF NOT EXISTS user
 
+              (ID INTEGER PRIMARY KEY AUTOINCREMENT    NOT NULL,
 
+              username           TEXT    NOT NULL,
 
-    
+              password            TEXT     NOT NULL,
+
+              privilege        TEXT,
+
+              status         TEXT);''')
+conn.commit()
+
+def initialise():
+    c.execute("SELECT * FROM user WHERE ID = '0' AND username = 'su'")
+    if len(c.fetchall()) ==  0:
+        c.execute("INSERT INTO user (ID,username,password,privilege,status) VALUES ('0', 'su', 'admin', 'admin', 'active' )")
+        conn.commit()
+        
+initialise()
+ 
+
 
 def table_test():
     global screen_table
+    
     screen_table = Toplevel(screen)
     screen_table.title("dashboard")
-    screen_table.geometry("1000x750")
+    screen_table.geometry("2000x1500")
     conn = sqlite3.connect('user.db')
     c = conn.cursor()
     c.execute("select * from user")
+    result = c.fetchall()
     e = Entry(screen_table, width=15, fg='blue', font=("Consolas", 13))     
     i=1
-    for user in c: 
+    Label(screen_table, text = "ID", font=("Consolas", 13)).grid(row=0, column = 0)
+    Label(screen_table, text = "Username", font=("Consolas", 13)).grid(row=0, column = 1)
+    Label(screen_table, text = "Password", font=("Consolas", 13)).grid(row=0, column = 2)
+    Label(screen_table, text = "Privilege", font=("Consolas", 13)).grid(row=0, column = 3)
+    Label(screen_table, text = "Status", font=("Consolas", 13)).grid(row=0, column = 4)
+    
+   
+    for user in result: 
+        
         for j in range(len(user)):
             e = Entry(screen_table, width=15, fg='blue', font=("Consolas", 13)) 
             e.grid(row=i, column=j) 
             e.insert(END, user[j])
+            del_button = Button(screen_table, text = "DELETE").grid(row=i, column=5)
         i=i+1
+             
         
-
+        
 def admin_add_account():
     print("account added")
+   
+def admin_delete_account():
+        info = del_button.grid_info()
+        Label(screen_table, text=str(info["row"], info["column"])).grid(row=0,column=6) 
 
 def delete_admin_screen_records():
     screen_records_admin.destroy()
-
+    
 def show_mainscreen():
     screen.deiconify()
 
@@ -78,7 +112,7 @@ def manage_records():
     
     query_label = Label(screen_records_admin, text=print_records, anchor="center", font = ("Consolas", 16))
     query_label.grid(row=1,column=0,columnspan=1)
-    add_record = Button(screen_records_admin, text="Register new account", command = admin_add_account).pack()
+    add_record = Button(screen_records_admin, text="Register new account", command = admin_add_account)
     add_record.grid(row = user_id, column = 1)
     return_button = Button(screen_records_admin, text="Return", command = delete_admin_screen_records )
     return_button.grid(row = user_id,column = 6)
@@ -97,7 +131,7 @@ def admin_session():
     screen_mainpage.title("dashboard")
     screen_mainpage.geometry("1000x750")
     Label(screen_mainpage, text = "").pack()
-    Label(screen_mainpage, text = "Hello "+username1, font = ("Consolas", 20)).pack()
+    Label(screen_mainpage, text = "Hello Admin "+username1, font = ("Consolas", 20)).pack()
     Label(screen_mainpage, text = "Welcome to AI LAB ", font = ("Consolas", 20)).pack()
     Label(screen_mainpage, text = "").pack()
     Label(screen_mainpage, text = "").pack()
@@ -170,8 +204,8 @@ def register_user():
     if password_info == confirm_password_info:
         
         
-        command_handler.execute(f"INSERT INTO user (username,password,privilege,status) VALUES ('{username_info}','{password_info}','guest','active')")
-        db.commit()
+        c.execute(f"INSERT INTO user (username,password,privilege,status) VALUES ('{username_info}', '{password_info}', 'guest','active')")
+        conn.commit()
 
         username_entry.delete(0, END)
         password_entry.delete(0, END)
