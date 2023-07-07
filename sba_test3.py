@@ -170,7 +170,7 @@ def register_user():
     if password_info == confirm_password_info:
         
         
-        command_handler.execute(f"INSERT INTO users (username,password,privilege,status) VALUES ('{username_info}','{password_info}','guest','active')")
+        command_handler.execute(f"INSERT INTO user (username,password,privilege,status) VALUES ('{username_info}','{password_info}','guest','active')")
         db.commit()
 
         username_entry.delete(0, END)
